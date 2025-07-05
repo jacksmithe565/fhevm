@@ -1,48 +1,17 @@
-[package]
-name = "kms-connector"
-publish.workspace = true
-authors.workspace = true
-edition.workspace = true
-license.workspace = true
-version.workspace = true
+use aws_sdk_kms::Client;
+use aws_sdk_s3::Client as S3Client;
+use aws_config::load_from_env;
+use tokio;
 
-[dependencies]
-alloy.workspace= true
-anyhow.workspace= true
-aws-sdk-kms.workspace= true
-bincode.workspace= true
-bip39.workspace= true
-clap.workspace= true
-config.workspace= true
-dashmap.workspace= true
-futures.workspace= true
-serde.workspace= true
-sha3.workspace= true
-tfhe.workspace = true
-tfhe-versionable.workspace = true
-thiserror.workspace= true
-tokio.workspace= true
-tokio-stream.workspace= true
-toml.workspace= true
-tonic.workspace= true
-tracing.workspace= true
-url.workspace= true
+#[tokio::main]
+async fn main() -> Result<(), anyhow::Error> {
+    let kms_config = load_from_env().await;
+    let kms_client = Client::new(&kms_config);
 
-# AWS S3 dependencies for ciphertext retrieval
-aws-config.workspace= true
-aws-sdk-s3.workspace= true
+    let s3_config = load_from_env().await;
+    let s3_client = S3Client::new(&s3_config);
 
-# TODO: substitute with existing KMS-Core implementation
-tracing-subscriber.workspace= true
+    // Implement logic to interact with KMS and S3 here
 
-# TODO: replace git submodule and path import by git import when fhevm-gateway and kms-core becomes open-source
-fhevm_gateway_rust_bindings.workspace= true
-kms-grpc.workspace= true
-
-[dev-dependencies]
-tempfile.workspace = true
-serial_test.workspace = true
-
-[[bin]]
-name = "kms-connector"
-path = "src/bin/kms-connector.rs"
+    Ok(())
+}
